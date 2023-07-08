@@ -27,7 +27,6 @@ import { NotificationsPermission } from "./NotificationsPermission";
 import { UsernameForm } from "./UsernameForm";
 
 export const OnboardAccount = ({
-  onRecover,
   containerRef,
   navProps,
   isAddingAccount,
@@ -49,7 +48,6 @@ export const OnboardAccount = ({
   } = useOnboarding();
   const { signMessageForWallet } = useRpcRequests();
   const {
-    inviteCode,
     action,
     keyringType,
     mnemonic,
@@ -66,22 +64,6 @@ export const OnboardAccount = ({
   }, [action, keyringType, mnemonic, setOnboardingData]);
 
   const steps = [
-    <InviteCodeForm
-      key="InviteCodeForm"
-      onClickRecover={onRecover}
-      onSubmit={(inviteCode) => {
-        setOnboardingData({ inviteCode });
-        nextStep();
-      }}
-    />,
-    <UsernameForm
-      key="UsernameForm"
-      inviteCode={inviteCode!}
-      onNext={(username) => {
-        setOnboardingData({ username });
-        nextStep();
-      }}
-    />,
     <CreateOrImportWallet
       key="CreateOrImportWallet"
       onNext={(data) => {
