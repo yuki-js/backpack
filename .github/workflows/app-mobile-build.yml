@@ -38,9 +38,9 @@ jobs:
     timeout-minutes: 70
     runs-on: ubuntu-latest
     # To use Remote Caching, uncomment the next lines and follow the steps below.
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    # env:
+    #   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+    #   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
       # Checkout must come before a custom action
       - name: 🏗 Setup repository
@@ -66,4 +66,10 @@ jobs:
         working-directory: packages/app-mobile
         env:
           APP_ENV: ${{ github.event.inputs.app_env }}
-        run: eas build --non-interactive --wait --platform=${{ github.event.inputs.platform }} --profile=${{ github.event.inputs.profile }}
+          EAS_LOCAL_BUILD_ARTIFACTS_DIR: ./artifacts
+        run: eas build --non-interactive --wait --platform=${{ github.event.inputs.platform }} --profile=${{ github.event.inputs.profile }} --local
+      - name: 🎁 upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: packages/app-mobile/artifacts
