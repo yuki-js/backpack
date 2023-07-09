@@ -58,7 +58,7 @@ const getEnvironment = () => {
 };
 
 export default ({ config }: ConfigContext): ExpoConfig & ExpoExtras => {
-  const projectID = "55bf074d-0473-4e61-9d9d-ecf570704635";
+  const projectID = "54a3c15d-f4d1-4363-8167-7bc2e0c0f0d0";
   const {
     image,
     backgroundColor,
