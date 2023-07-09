@@ -60,24 +60,12 @@ export function WithAuth({ children }: { children: React.ReactElement }) {
     setServerPublicKeys(null);
     (async () => {
       setClientPublicKeys(await getSigners());
-      const result = user.jwt ? await checkAuthentication(user.jwt) : null;
       // These set state calls should be batched
-      if (result) {
-        const { publicKeys } = result;
-        setServerPublicKeys(publicKeys);
-      } else {
-        // Not authenticated so couldn't get public keys, get the primary
-        // public keys from a public endpoint and use one of those to auth
-        const response = await fetch(
-          `${BACKEND_API_URL}/users/${user.username}`
-        );
-        const serverPublicKeys = (await response.json()).publicKeys;
-        setServerPublicKeys(serverPublicKeys);
-        // Find a local signer that exists on the client and server and
-        // set the auth data
-        const signer = await getAuthSigner(
-          serverPublicKeys.map((p: ServerPublicKey) => p.publicKey)
-        );
+      {
+        const signers = await getSigners();
+        console.log("signer", signers);
+
+        const signer = signers[0];
         setAuthData({
           ...signer,
           message: getAuthMessage(user.uuid),
@@ -95,13 +83,7 @@ export function WithAuth({ children }: { children: React.ReactElement }) {
     (async () => {
       if (authData) {
         if (!authData.hardware) {
-          // Auth signer is not a hardware wallet, sign transparent
-          const signature = await signMessageForWallet(
-            authData.blockchain,
-            authData.publicKey,
-            authData.message
-          );
-          setAuthSignature(signature);
+          setAuthSignature("true");
         } else {
           // Auth signer is a hardware wallet, pop up a drawer to guide through
           // flow
@@ -117,18 +99,6 @@ export function WithAuth({ children }: { children: React.ReactElement }) {
   useEffect(() => {
     (async () => {
       if (authData && authSignature) {
-        const { id, jwt, publicKeys } = await authenticate({
-          ...authData,
-          signature: authSignature,
-        });
-        // Update server public keys so we attempt to sync the non primary
-        // public keys (i.e. those that require authentication to see)
-        setServerPublicKeys(publicKeys);
-        // Store the JWT from the authentication forl ater
-        await background.request({
-          method: UI_RPC_METHOD_USER_JWT_UPDATE,
-          params: [id, jwt],
-        });
         // Close the hardware sign drawer (if open)
         setOpenDrawer(false);
       }
@@ -172,10 +142,11 @@ export function WithAuth({ children }: { children: React.ReactElement }) {
         } else {
           // Sync all transparently signable public keys by adding them
           // to the server
-          await background.request({
-            method: UI_RPC_METHOD_USER_ACCOUNT_PUBLIC_KEY_CREATE,
-            params: [danglingPublicKey.blockchain, danglingPublicKey.publicKey],
-          });
+          // await background.request({
+          //   method: UI_RPC_METHOD_USER_ACCOUNT_PUBLIC_KEY_CREATE,
+          //   params: [danglingPublicKey.blockchain, danglingPublicKey.publicKey],
+          // });
+          console.log("transparently signable public key", danglingPublicKey);
         }
       }
     })();

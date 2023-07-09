@@ -18,13 +18,9 @@ const suspenseCache = new SuspenseCache();
 // The main nav persistent stack.
 //
 export function Unlocked() {
-  useBootstrapFast();
-  const user = useAuthenticatedUser();
-  if (!user) {
-    return <Loading />;
-  }
-
-  const apolloClient = createApolloClient(user.jwt);
+  const apolloClient = createApolloClient(
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJleHAiOjE2MzI0NjQ0NzAsImlhdCI6MTYzMjQ2NDQ3MCwiaXNzIjoiY29ybWFuZCIsInN1YiI6ImNvcmFtYW5kIiwidHlwZSI6ImF1dG"
+  );
 
   return (
     <ApolloProvider client={apolloClient} suspenseCache={suspenseCache}>
