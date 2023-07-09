@@ -71,7 +71,7 @@ export default ({ config }: ConfigContext): ExpoConfig & ExpoExtras => {
     ...config,
     name: "Backpack",
     slug: "backpack",
-    owner: "coral-xyz",
+    owner: "yuki-js",
     version: "0.1.0",
     orientation: "portrait",
     icon: isDev
