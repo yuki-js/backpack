@@ -70,7 +70,7 @@ export default ({ config }: ConfigContext): ExpoConfig & ExpoExtras => {
   return {
     ...config,
     name: "Backpack",
-    slug: "backpack",
+    slug: "backpack-custombuild",
     owner: "yuki-js",
     version: "0.1.0",
     orientation: "portrait",
